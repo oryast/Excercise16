@@ -1,4 +1,4 @@
-class Encryption(Object):
+class Encryption(object):
     def encrypt(self):
         raise NotImplementedError("Not implemented!")
 
