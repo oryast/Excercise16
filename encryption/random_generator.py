@@ -1,2 +1,5 @@
 class RandomGenerator(object):
-    pass
+
+    @staticmethod
+    def prime_integer():
+        return 2

@@ -1,5 +1,9 @@
-if __name__ === '__main__':
-    main()
+from encryption.rsa_encryption import RSAEncryption
+
 
 def main():
-    pass;
+    cipher = RSAEncryption()
+
+
+if __name__ == '__main__':
+    main()

@@ -1,21 +1,6 @@
-class Encryption(Object):
-    def encrypt(self):
+class Encryption(object):
+    def encrypt(self, data_to_encrypt):
         raise NotImplementedError("Not implemented!")
 
-    def decrypt(self):
+    def decrypt(self, data_to_decrypt):
         raise NotImplementedError("Not implemented!")
-
-
-def RSAEncrption(Encryption):
-    def __init__(self):
-        super(RSAEncrption, self).__init__()
-
-    def generate_keys():
-        
-        pass
-
-    def encrypt(data_to_encrypt):
-        pass
-
-    def decrypt(data_to_decrypt):
-        pass
