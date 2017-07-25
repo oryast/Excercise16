@@ -1,0 +1,2 @@
+class RandomGenerator(object):
+    pass
