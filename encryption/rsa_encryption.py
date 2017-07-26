@@ -1,29 +1,36 @@
 import fractions
 import collections
-from encrypton import Encryption
+from encryption import Encryption
 from random_generator import RandomGenerator
 
 
-KEY_LENGTH = 128  # bits
-BLOCK_SIZE = (KEY_LENGTH / 8)  # (bits / 1 byte)
+BLOCK_SIZE = 1
 
 
 RSAPublicKey = collections.namedtuple('RSAPublicKey', 'n e')
 RSAPrivateKey = collections.namedtuple('RSAPrivateKey', 'n d')
 
 
-def RSAEncryption(Encryption):
+class RSAEncryption(Encryption):
     def __init__(self):
         super(RSAEncryption, self).__init__()
         self._generate_keys()
 
     def _generate_keys(self):
         p = RandomGenerator.prime_integer()
+        print p
         q = RandomGenerator.prime_integer()
+        print q
         n = p * q
         totient = (p - 1) * (q - 1)
-        e = self._find_coprime(totient)
-        d = self._modinv(e, totient)
+        coprime = totient
+        while coprime > 0:
+            try:
+                e = self._find_coprime(coprime)
+                d = self._modinv(e, totient)
+                break
+            except Exception:
+                coprime = e - 1
         self._public_key = RSAPublicKey(n=n, e=e)
         self._private_key = RSAPrivateKey(n=n, d=d)
 
@@ -49,10 +56,12 @@ def RSAEncryption(Encryption):
         raise Exception("No coprime for %d" % (totient, ))
 
     def encrypt(self, data_to_encrypt):
+        print "encrypting..."
         blocks = [data_to_encrypt[index:index + BLOCK_SIZE] for index in xrange(0, len(data_to_encrypt), BLOCK_SIZE)]
+        print "number of blocks %d" % len(blocks)
         cipher_text = []
         for block in blocks:
-            cipher_text = self._encrypt_block(block)
+            cipher_text.append(self._encrypt_block(block))
         return cipher_text
 
     def _encrypt_block(self, block_to_encrypt):
@@ -65,7 +74,12 @@ def RSAEncryption(Encryption):
         return int(block_data.encode('hex'), 16)
 
     def _integer_to_data(self, integer):
-        return hex(integer)[2:].decode("hex")
+        string_represntation = hex(integer)[2:]
+        if string_represntation[-1] == 'L':
+            string_represntation = string_represntation[:-1]
+        if (len(string_represntation) % 2 == 1):
+            string_represntation = "0" + string_represntation
+        return string_represntation.decode("hex")
 
     def decrypt(self, data_to_decrypt):
         data = ""
@@ -78,4 +92,5 @@ def RSAEncryption(Encryption):
     def _decrypt_block(self, encrypted_block):
         plain_text = encrypted_block ** self._private_key.d
         plain_text = plain_text % self._private_key.n
+        plain_text = self._integer_to_data(plain_text)
         return plain_text
